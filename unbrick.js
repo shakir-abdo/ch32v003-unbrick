@@ -53,7 +53,7 @@ async function Control3v3(device, isOn) {
 }
 
 async function main() {
-  program.version('1.0.0').description('CLI tool to unbrick CH32V003 devices').parse(process.argv)
+  program.version('1.0.0').description('CLI tool to unbrick CH32V003 microcontrollers').parse(process.argv)
 
   try {
     // Find WCH-Link device
