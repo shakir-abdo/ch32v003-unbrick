@@ -1,0 +1,19 @@
+{
+  "name": "ch32v003-unbrick",
+  "version": "1.0.0",
+  "main": "unbrick.js",
+  "bin": {
+    "ch32v003-unbrick": "./unbrick.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "commander": "^13.1.0",
+    "usb": "^2.15.0"
+  }
+}
