@@ -1,6 +1,6 @@
 # CH32V003 Unbrick Tool
 
-This is a CLI tool to unbrick CH32V003 devices using a WCH-LinkE device.
+This is a CLI tool to unbrick CH32V003 microcontrollers using a WCH-LinkE device.
 
 ## Installation
 
