@@ -42,3 +42,7 @@ This tool has been tested on the CH32V003J4M6 microcontroller.
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
+## Credits
+
+Special thanks to Awab Omer ([@awab228](https://github.com/awab228)) for helping with analyzing and testing the USB traffic.
