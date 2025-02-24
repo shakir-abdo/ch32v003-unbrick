@@ -8,6 +8,7 @@
 
 const usb = require('usb')
 const {Command} = require('commander')
+const chalk = require('chalk')
 const program = new Command()
 
 // Helper function to create delays
@@ -22,14 +23,14 @@ function wchLinkCommand(device, command, replyLength = 0) {
 
       outEndpoint.transfer(Buffer.from(command), (error) => {
         if (error) {
-          console.error('Error sending command:', error)
+          console.error(chalk.red('Error sending command:'), error)
           return reject(error)
         }
 
         if (replyLength > 0) {
           inEndpoint.transfer(replyLength, (error, data) => {
             if (error) {
-              console.error('Error receiving response:', error)
+              console.error(chalk.red('Error receiving response:'), error)
               return reject(error)
             }
             resolve(data)
@@ -61,7 +62,7 @@ async function main() {
       throw new Error('Could not find WCH-Link device')
     }
 
-    console.log('Device found')
+    console.log(chalk.green('Device found'))
     device.open()
 
     // Get the interface
@@ -72,20 +73,20 @@ async function main() {
       try {
         interface.detachKernelDriver()
       } catch (e) {
-        console.log('Kernel driver detach not necessary')
+        console.log(chalk.yellow('Kernel driver detach not necessary'))
       }
     }
 
     // Claim interface
     interface.claim()
 
-    console.log('Entering Unbrick Mode')
+    console.log(chalk.blue('Entering Unbrick Mode'))
     await Control3v3(device, false)
     await sleep(500) // 500ms delay
     await Control3v3(device, true)
     await sleep(100) // 100ms delay
 
-    console.log('Connection starting')
+    console.log(chalk.blue('Connection starting'))
 
     // Initial setup commands
     await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x03], 1024)
@@ -101,15 +102,15 @@ async function main() {
     // Wait for operation to complete
     await sleep(500)
 
-    console.log('Device unbricked successfully')
+    console.log(chalk.green('Device unbricked successfully'))
 
     // Cleanup
     interface.release(true, (err) => {
-      if (err) console.error('Error releasing interface:', err)
+      if (err) console.error(chalk.red('Error releasing interface:'), err)
       device.close()
     })
   } catch (error) {
-    console.error('Error:', error)
+    console.error(chalk.red('Error:'), error)
     process.exit(1)
   }
 }

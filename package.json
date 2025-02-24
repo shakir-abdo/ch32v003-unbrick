@@ -14,6 +14,7 @@
   "description": "",
   "dependencies": {
     "commander": "^13.1.0",
-    "usb": "^2.15.0"
+    "usb": "^2.15.0",
+    "chalk": "^4.1.2"
   }
 }
