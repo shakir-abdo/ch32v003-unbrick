@@ -11,6 +11,9 @@ const {Command} = require('commander')
 const chalk = require('chalk')
 const program = new Command()
 
+// Helper function to create delays
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 // WCH Link command function
 function wchLinkCommand(device, command, replyLength = 0) {
   return new Promise((resolve, reject) => {
@@ -42,6 +45,13 @@ function wchLinkCommand(device, command, replyLength = 0) {
   })
 }
 
+// Control 3.3V function
+async function Control3v3(device, isOn) {
+  const command = isOn ? Buffer.from([0x81, 0x0d, 0x01, 0x09]) : Buffer.from([0x81, 0x0d, 0x01, 0x0a])
+
+  await wchLinkCommand(device, command)
+}
+
 async function main() {
   program.version('1.0.0').description('CLI tool to unbrick CH32V003 microcontrollers').parse(process.argv)
 
@@ -69,13 +79,28 @@ async function main() {
 
     // Claim interface
     interface.claim()
-    console.log(chalk.blue('starting'))
+
+    console.log(chalk.blue('Entering Unbrick Mode'))
+    await Control3v3(device, false)
+    await sleep(500) // 500ms delay
+    await Control3v3(device, true)
+    await sleep(100) // 100ms delay
+
+    console.log(chalk.blue('Connection starting'))
 
     // Initial setup commands
-    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x01])
-    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x01])
-    await wchLinkCommand(device, [0x81, 0x0c, 0x20, 0x90, 0x01])
-    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x0f, 0x09])
+    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x03], 1024)
+    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x01], 1024)
+
+    // Configure debug module
+    await wchLinkCommand(device, [0x81, 0x0c, 0x02, 0x05, 0x01], 1024)
+    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x02], 1024)
+
+    // Erase chip
+    await wchLinkCommand(device, [0x81, 0x0d, 0x01, 0x0f, 0x09], 1024)
+
+    // Wait for operation to complete
+    await sleep(500)
 
     console.log(chalk.green('Device unbricked successfully'))
 
